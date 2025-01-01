@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: elasraouib/api_ml
+        ports:
+        - containerPort: 8000
+        env:
+        - name: BACKEND_URL
+          value: "http://backend-service.object-detection.svc.cluster.local:8001/predict"
+

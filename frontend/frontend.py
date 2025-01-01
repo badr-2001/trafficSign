@@ -1,10 +1,10 @@
-# Streamlit frontend
 import streamlit as st
 import requests
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-API_URL = "http://localhost:8000/predict"
+# API endpoint for the new middleware API
+API_URL = "http://localhost:8000/process"
 
 st.title("YOLO Object Detection")
 st.write("Upload an image to perform object detection using YOLO.")

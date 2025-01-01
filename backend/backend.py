@@ -7,8 +7,7 @@ from ultralytics import YOLO
 app = FastAPI()
 
 # Load the YOLO model
-model = YOLO("best.pt")  # Replace with your YOLO model path
-
+model = YOLO("best.pt")  # Replace with the path to your YOLO weights file
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
