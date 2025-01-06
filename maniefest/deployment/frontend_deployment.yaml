@@ -15,10 +15,8 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: elasraouib/frontend_ml
+        image: elasraouib/front-ml97
         ports:
         - containerPort: 8501
-        env:
-        - name: API_URL
-          value: "http://api-service.object-detection.svc.cluster.local:8000/process"
+        
 

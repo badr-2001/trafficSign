@@ -8,5 +8,7 @@ spec:
     app: api
   ports:
   - protocol: TCP
-    port: 8000
-    targetPort: 8000
+    port: 8000  # Port interne
+    targetPort: 8000  # Port exposé par le conteneur
+    nodePort: 30000  # Port externe pour accéder au service depuis le nœud
+  type: NodePort  # Permet l'accès externe au service

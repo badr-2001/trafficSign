@@ -15,10 +15,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: elasraouib/api_ml
+        image: elasraouib/api_ml2
         ports:
         - containerPort: 8000
-        env:
-        - name: BACKEND_URL
-          value: "http://backend-service.object-detection.svc.cluster.local:8001/predict"
+        
 

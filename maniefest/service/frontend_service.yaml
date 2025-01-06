@@ -8,5 +8,7 @@ spec:
     app: frontend
   ports:
   - protocol: TCP
-    port: 8501
-    targetPort: 8501
+    port: 8501  # Port interne
+    targetPort: 8501  # Port exposé par le conteneur
+    nodePort: 31000  # Port externe pour accéder au service depuis le nœud
+  type: NodePort  # Permet l'accès externe au service

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 app = FastAPI()
 
 # URL for the backend service
-BACKEND_URL = "http://localhost:8001/predict"
+BACKEND_URL = "http://backend-service.default.svc.cluster.local:8001/predict"
 
 @app.post("/process")
 async def process(file: UploadFile = File(...)):
