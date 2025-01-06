@@ -8,6 +8,6 @@ spec:
     app: backend
   ports:
   - protocol: TCP
-    port: 8001  # Port interne du cluster
-    targetPort: 8001  # Port exposé par le conteneur
-  type: ClusterIP  # Accessible uniquement à l'intérieur du cluster
+    port: 8001  
+    targetPort: 8001 
+  type: ClusterIP  
