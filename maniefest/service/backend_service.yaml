@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: default
+spec:
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 8001  # Port interne du cluster
+    targetPort: 8001  # Port exposé par le conteneur
+  type: ClusterIP  # Accessible uniquement à l'intérieur du cluster

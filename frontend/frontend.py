@@ -1,27 +1,28 @@
-# Streamlit frontend
 import streamlit as st
 import requests
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-API_URL = "http://localhost:8000/predict"
+# API endpoint pour le middleware
+API_URL = "http://api-service.default.svc.cluster.local:8000/process"
 
 st.title("YOLO Object Detection")
 st.write("Upload an image to perform object detection using YOLO.")
 
+# Chargement du fichier image
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    # Display the uploaded image
+    # Afficher l'image téléchargée
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Uploaded Image", use_container_width=True)
 
-    # Convert image to bytes
+    # Convertir l'image en bytes
     img_bytes = io.BytesIO()
     image.save(img_bytes, format="JPEG")
     img_bytes = img_bytes.getvalue()
 
-    # Send the image to the API
+    # Envoyer l'image à l'API
     with st.spinner("Performing object detection..."):
         response = requests.post(API_URL, files={"file": ("image.jpg", img_bytes, "image/jpeg")})
 
@@ -29,11 +30,13 @@ if uploaded_file is not None:
         detections = response.json().get("detections", [])
         st.success("Object detection completed!")
 
-        # Draw bounding boxes and labels on the image
+        # Dessiner des boîtes de délimitation et des étiquettes sur l'image
         draw = ImageDraw.Draw(image)
         try:
-            font = ImageFont.truetype("arial.ttf", size=20)  # Ensure arial.ttf is accessible
+            # Charger une police avec une taille plus grande
+            font = ImageFont.truetype("arial.ttf", size=30)
         except IOError:
+            # Utiliser la police par défaut si "arial.ttf" n'est pas trouvée
             font = ImageFont.load_default()
 
         for det in detections:
@@ -41,14 +44,33 @@ if uploaded_file is not None:
             label = det["name"]
             confidence = det["confidence"]
 
-            # Draw bounding box
-            draw.rectangle([xmin, ymin, xmax, ymax], outline="red", width=3)
+            # Dessiner la boîte avec des bordures plus épaisses
+            draw.rectangle([xmin, ymin, xmax, ymax], outline="red", width=5)
 
-            # Add label and confidence
-            draw.text((xmin, ymin), f"{label} ({confidence:.4f})", fill="red", font=font)
+            # Préparer le texte
+            text = f"{label} ({confidence:.2f})"
+            bbox = draw.textbbox((0, 0), text, font=font)  # Utiliser textbbox
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
 
-        # Display the image with bounding boxes
+            # Calculer la position du texte (juste au-dessus du rectangle)
+            text_x = xmin
+            text_y = ymin - text_height - 5  # Ajuster l'espace entre le texte et la boîte
+            if text_y < 0:  # Si le texte sort de l'image en haut, placez-le en bas
+                text_y = ymin + 5
+
+            # Dessiner un arrière-plan pour le texte
+            margin = 3
+            draw.rectangle(
+                [text_x - margin, text_y - margin, text_x + text_width + margin, text_y + text_height + margin],
+                fill="red"
+            )
+
+            # Ajouter le texte en blanc
+            draw.text((text_x, text_y), text, fill="white", font=font)
+
+        # Afficher l'image avec les prédictions
         st.image(image, caption="Detected Objects", use_container_width=True)
     else:
         st.error("Error during prediction. Please check the backend.")
-        st.json(response.json())  # Show error details
+        st.json(response.json())  # Afficher les détails de l'erreur
