@@ -6,28 +6,24 @@ from ultralytics import YOLO
 
 app = FastAPI()
 
-# Load the YOLO model
-model = YOLO("best.pt")  # Replace with the path to your YOLO weights file
+model = YOLO("best.pt") 
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     try:
-        # Read the uploaded image
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data)).convert("RGB")
 
-        # Perform detection
         results = model(image)
         detections = []
 
-        # Extract detection results
         for result in results:
             if hasattr(result, 'boxes') and result.boxes is not None:
                 for box in result.boxes:
                     xmin, ymin, xmax, ymax = map(float, box.xyxy[0])
                     confidence = float(box.conf[0])
                     class_id = int(box.cls[0])
-                    class_name = result.names.get(class_id, "Unknown")  # Map class_id to name
+                    class_name = result.names.get(class_id, "Unknown")  
 
                     detections.append({
                         "xmin": xmin,
